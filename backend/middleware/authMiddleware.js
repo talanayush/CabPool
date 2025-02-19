@@ -9,7 +9,7 @@ const verifyToken = (req, res, next) => {
 
     try {
         const verified = jwt.verify(token, SECRET_KEY);
-        req.user = verified;
+        req.user = verified;  // Contains id, name, email, enrollmentNumber, upiId
         next();
     } catch (error) {
         res.status(403).json({ message: "Invalid Token" });
