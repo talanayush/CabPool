@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Login() {
+export default function Login({setIsAuthenticated}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -17,7 +17,7 @@ export default function Login() {
         event.preventDefault();
         setLoading(true);
         setError("");
-
+    
         try {
             const response = await fetch("http://localhost:5000/api/auth/login", {
                 method: "POST",
@@ -25,23 +25,26 @@ export default function Login() {
                 body: JSON.stringify({ email, password }),
                 credentials: "include",
             });
-
+    
             const data = await response.json();
-
+    
             if (!response.ok) {
                 throw new Error(data.message || "Login failed");
             }
-
+    
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
-
-            navigate("/");
+    
+            setIsAuthenticated(true);  // ✅ Update state immediately  
+            navigate("/");  // ✅ Now it should redirect correctly  
+    
         } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
     }
+    
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">

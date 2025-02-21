@@ -7,25 +7,28 @@ export default function Navbar({ isAuthenticated, setIsAuthenticated }) {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         setIsAuthenticated(false);
-        navigate("/register");
+        navigate("/login"); // ✅ Redirects properly
     }
 
     return (
-        <nav className="bg-slate-800 text-white p-4 shadow-lg">
+        <nav className="bg-slate-800 text-white p-4 shadow-lg fixed top-0 w-full z-50">
             <div className="container mx-auto flex justify-between items-center">
-                <Link to="/" className="hover:text-gray-300 px-5">My App</Link>
-                <ul className="flex space-x-6 px-10">
+                <Link to="/" className="text-lg font-semibold hover:text-gray-300">My App</Link>
+                <ul className="flex space-x-6">
                     <li><Link to="/about" className="hover:text-gray-300">About</Link></li>
                     <li><Link to="/services" className="hover:text-gray-300">Services</Link></li>
                     <li><Link to="/contact" className="hover:text-gray-300">Contact</Link></li>
-                {isAuthenticated && (
-                    <button 
-                        onClick={handleLogout} 
-                        className="bg-red-500 px-2 rounded-lg hover:bg-red-700"
-                    >
-                        Logout
-                    </button>
-                )}
+                    
+                    {isAuthenticated && (
+                        <li>
+                            <button 
+                                onClick={handleLogout} 
+                                className="bg-red-500 rounded-lg px-4 py-2 hover:bg-red-700 transition"
+                            >
+                                Logout
+                            </button>
+                        </li>
+                    )}
                 </ul>
             </div>
         </nav>
