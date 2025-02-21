@@ -1,18 +1,17 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    function onChangeEmail(event) {
-        setEmail(event.target.value);
-    }
-
-    function onChangePassword(event) {
-        setPassword(event.target.value);
-    }
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        name === "email" ? setEmail(value) : setPassword(value);
+    };
 
     async function handleLogin(event) {
         event.preventDefault();
@@ -24,7 +23,7 @@ export default function Login() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
-                credentials: "include", // To handle HTTP-only cookies
+                credentials: "include",
             });
 
             const data = await response.json();
@@ -33,9 +32,10 @@ export default function Login() {
                 throw new Error(data.message || "Login failed");
             }
 
-            alert("Login successful!");
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
+
+            navigate("/");
         } catch (error) {
             setError(error.message);
         } finally {
@@ -44,39 +44,63 @@ export default function Login() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
-            <form onSubmit={handleLogin} className="bg-white p-6 rounded-lg shadow-lg w-80">
-                <h2 className="text-xl font-bold mb-4">Login</h2>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
+            <form 
+                onSubmit={handleLogin} 
+                className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm"
+            >
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Login</h2>
 
-                {error && <p className="text-red-500">{error}</p>}
+                {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
 
-                <label htmlFor="email" className="block text-sm font-medium">Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
-                    value={email} 
-                    onChange={onChangeEmail} 
-                    className="w-full p-2 border rounded mb-3"
-                    required 
-                />
+                <div className="mb-3">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={email} 
+                        onChange={handleChange} 
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+                        required 
+                        aria-label="Enter your email"
+                    />
+                </div>
 
-                <label htmlFor="password" className="block text-sm font-medium">Password</label>
-                <input 
-                    type="password" 
-                    name="password" 
-                    value={password} 
-                    onChange={onChangePassword} 
-                    className="w-full p-2 border rounded mb-4"
-                    required 
-                />
+                <div className="mb-4">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        value={password} 
+                        onChange={handleChange} 
+                        className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+                        required 
+                        aria-label="Enter your password"
+                    />
+                </div>
 
                 <button 
                     type="submit" 
-                    className="bg-blue-500 text-white px-4 py-2 rounded w-full"
+                    className={`w-full py-2 rounded text-white transition ${
+                        loading 
+                            ? "bg-blue-300 cursor-not-allowed" 
+                            : "bg-blue-500 hover:bg-blue-600"
+                    }`}
                     disabled={loading}
                 >
                     {loading ? "Logging in..." : "Login"}
                 </button>
+
+                <div className="text-center mt-4 text-sm">
+                    <span>Don't have an account?</span>{" "}
+                    <Link to="/register" className="text-blue-500 hover:underline">
+                        Register here
+                    </Link>
+                </div>
             </form>
         </div>
     );

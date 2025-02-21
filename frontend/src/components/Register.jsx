@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Register() {
+export default function Register({ setIsAuthenticated }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -11,6 +12,7 @@ export default function Register() {
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     function handleChange(event) {
         setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -34,8 +36,12 @@ export default function Register() {
                 throw new Error(data.message || "Registration failed");
             }
 
-            alert("Registration successful! You can now log in.");
-            setFormData({ name: "", email: "", enrollmentNumber: "", upiId: "", password: "" });
+            // ✅ Save token & user after registration (auto-login)
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            setIsAuthenticated(true); // Update state
+            navigate("/"); // Redirect to Tickets
         } catch (error) {
             setError(error.message);
         } finally {
@@ -44,7 +50,7 @@ export default function Register() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
             <form onSubmit={handleRegister} className="bg-white p-6 rounded-lg shadow-lg w-80">
                 <h2 className="text-xl font-bold mb-4">Register Yourself</h2>
 
@@ -107,6 +113,13 @@ export default function Register() {
                 >
                     {loading ? "Registering..." : "Register"}
                 </button>
+
+                <div className="text-center mt-4 text-sm">
+                    <span>Already have an account?</span>{" "}
+                    <Link to="/login" className="text-blue-500 hover:underline">
+                        Login here
+                    </Link>
+                </div>
             </form>
         </div>
     );
