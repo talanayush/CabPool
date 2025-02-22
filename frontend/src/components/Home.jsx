@@ -3,6 +3,9 @@ import Tickets from "./Tickets";
 import { useState, useEffect } from "react";
 import TicketModal from "./TicketModal";
 
+import { jwtDecode } from "jwt-decode";
+
+
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
@@ -12,13 +15,19 @@ export default function Home() {
   async function handleSave(details) {
     try {
       console.log("mera add function");
-      console.log(details);
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+          return <p>Not logged in</p>;
+      }
+
+      const decoded = jwtDecode(token);
       const response = await fetch("http://localhost:5000/tickets/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...details, userId: localStorage.getItem("userId") }), 
+        body: JSON.stringify({ ...details, userId: decoded.enrollmentNumber }), 
       });
   
       const data = await response.json();
