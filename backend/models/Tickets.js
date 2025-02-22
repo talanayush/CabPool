@@ -5,7 +5,13 @@ const TicketSchema = new mongoose.Schema({
   source: String,
   destination: String,
   membersNeeded: Number,
-  userId: String, // Store the user who created the ticket
+  userId: String, // Creator's Enrollment Number
+  riders: [
+    {
+      enrollmentNumber: String, // Unique identifier
+      name: String, // Rider's name
+    }
+  ],
 }, { timestamps: true });
 
 module.exports = mongoose.model("Ticket", TicketSchema);
