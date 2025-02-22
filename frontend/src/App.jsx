@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import User from "./components/UserProfile";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -12,7 +13,8 @@ function App() {
       setIsAuthenticated(!!localStorage.getItem("token"));
     };
 
-    window.addEventListener("storage", checkAuth); // ✅ Handle token updates
+    checkAuth(); // ✅ Run immediately
+    window.addEventListener("storage", checkAuth);
 
     return () => {
       window.removeEventListener("storage", checkAuth);
@@ -33,6 +35,10 @@ function App() {
         <Route 
           path="/register" 
           element={isAuthenticated ? <Navigate to="/" /> : <Register setIsAuthenticated={setIsAuthenticated} />} 
+        />
+        <Route
+          path="/user"
+          element={isAuthenticated ? <User isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />}
         />
       </Routes>
     </Router>

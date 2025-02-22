@@ -29,7 +29,7 @@ export default function Home() {
 
       const data = await response.json();
       if (response.ok) {
-        setRides([...rides, data.ticket]);
+        setRides([data.ticket, ...rides]); // 🔹 Add new ride to top
       } else {
         console.error("Error saving ticket:", data.error);
       }
@@ -64,6 +64,7 @@ export default function Home() {
       console.error("Error:", error);
     }
   }
+
   async function handleUnjoin(ticketId) {
     try {
       const token = localStorage.getItem("token");
@@ -94,7 +95,9 @@ export default function Home() {
         const response = await fetch("http://localhost:5000/tickets/all");
         const data = await response.json();
         if (response.ok) {
-          setRides(data);
+          // 🔹 Sort tickets by latest createdAt
+          const sortedTickets = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setRides(sortedTickets);
         } else {
           console.error("Error fetching tickets:", data.error);
         }
@@ -107,7 +110,7 @@ export default function Home() {
 
   return (
     <div>
-      <Navbar isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
+      <Navbar setIsAuthenticated={setIsAuthenticated} />
       <div className="mt-16 p-6">
         <button 
           onClick={() => setIsModalOpen(true)} 
@@ -119,7 +122,7 @@ export default function Home() {
         <div className="mt-4">
           {rides.map((ride, index) => (
             <Tickets 
-              key={index}
+              key={ride._id} // Changed key from index to _id (better for React rendering)
               id={ride._id} 
               time={ride.time}
               source={ride.source}
