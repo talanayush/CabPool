@@ -1,9 +1,11 @@
 import { jwtDecode } from "jwt-decode";
 
-export default function Tickets({ id, time, source, destination, membersNeeded, riders, onJoin, onUnjoin }) {
+export default function Tickets({ id, time, source, destination, membersNeeded, riders, onJoin, onUnjoin, onDelete }) {
   const token = localStorage.getItem("token");
   const decoded = token ? jwtDecode(token) : null;
+  
   const isAlreadyJoined = decoded && riders.some(rider => rider.enrollmentNumber === decoded.enrollmentNumber);
+  const isCreator = decoded && riders.length > 0 && riders[0].enrollmentNumber === decoded.enrollmentNumber;
 
   return (
     <div className="p-4 bg-gray-100 rounded-lg shadow-md mb-4">
@@ -20,7 +22,14 @@ export default function Tickets({ id, time, source, destination, membersNeeded, 
         ))}
       </ul>
 
-      {membersNeeded > 0 && !isAlreadyJoined ? (
+      {isCreator ? (
+        <button 
+          onClick={() => onDelete(id)} 
+          className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer"
+        >
+          Delete
+        </button>
+      ) : membersNeeded > 0 && !isAlreadyJoined ? (
         <button 
           onClick={() => onJoin(id)} 
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer"

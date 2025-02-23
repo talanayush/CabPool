@@ -89,6 +89,32 @@ export default function Home() {
     }
   }
 
+  async function handleDelete(ticketId) {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+  
+      const decoded = jwtDecode(token);
+      const enrollmentNumber = decoded.enrollmentNumber; // Get user's enrollment number
+  
+      const response = await fetch(`http://localhost:5000/tickets/delete/${ticketId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enrollmentNumber }) // Send the owner's enrollment number
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        setRides(rides.filter(ride => ride._id !== ticketId)); // 🔹 Remove deleted ride from state
+      } else {
+        console.error("Error deleting ticket:", data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  
+
   useEffect(() => {
     async function fetchTickets() {
       try {
@@ -131,6 +157,7 @@ export default function Home() {
               riders={ride.riders}
               onJoin={handleJoin}
               onUnjoin={handleUnjoin}
+              onDelete={handleDelete}
             />
           ))}
         </div>
