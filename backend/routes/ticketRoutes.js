@@ -38,6 +38,23 @@ router.get("/all", async (req, res) => {
   }
 });
 
+router.patch("/close/:ticketId", async (req, res) => {
+  try {
+    const ticket = await Ticket.findByIdAndUpdate(
+      req.params.ticketId,
+      { isCompleted: true },
+      { new: true }
+    );
+
+    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
+
+    res.json({ message: "Ticket archived successfully", ticket });
+  } catch (error) {
+    res.status(500).json({ error: "Error closing ticket" });
+  }
+});
+
+
 router.get("/:ticketId", async (req, res) => {
   try {
     const { ticketId } = req.params;

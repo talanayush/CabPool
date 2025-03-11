@@ -20,55 +20,62 @@ export default function Tickets({ id, time, source, destination, membersNeeded, 
   const isAlreadyJoined = riders.some(rider => rider.enrollmentNumber === userEnrollment);
   const isCreator = userEnrollment === userId;
 
-  //console.log("Decoded Enrollment:", userEnrollment);
-  //console.log("Ticket Owner Enrollment:", userId);
-  //console.log("Is Creator:", isCreator);
-  //console.log("Is Already Joined:", isAlreadyJoined);
+  // ❌ Don't render completed rides
+  if (isCompleted) return null;
 
   return (
-    <div className="p-4 bg-gray-100 rounded-lg shadow-md mb-4">
-      <h2 className="text-lg font-bold">{source} → {destination}</h2>
-      <p><strong>Time:</strong> {time}</p>
-      <p><strong>Seats Left:</strong> {membersNeeded}</p>
-      {isCompleted && <p className="text-red-600 font-semibold">Ride Completed</p>}
+    <div className="p-4 bg-white rounded-lg shadow-lg border border-gray-200 mb-4 max-w-md mx-auto sm:max-w-lg lg:max-w-xl">
+      {/* Ride Info */}
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-gray-800">{source} → {destination}</h2>
+        <p className="text-sm text-gray-600">{time}</p>
+      </div>
 
-      <h3 className="font-semibold mt-2">Riders:</h3>
-      <ul className="list-disc ml-4">
-        {riders.map((rider, index) => (
-          <li key={index} className="text-sm">
-            {rider.name} (Enrollment: {rider.enrollmentNumber})
-          </li>
-        ))}
-      </ul>
+      {/* Seats Left */}
+      <p className="text-gray-700 mb-2">
+        <strong>Seats Left:</strong> <span className="font-semibold">{membersNeeded}</span>
+      </p>
 
-      {!isCompleted && (
-        <>
-          {isCreator ? (
-            <button 
-              onClick={() => onDelete(id)} 
-              className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg cursor-pointer"
-            >
-              Delete
-            </button>
-          ) : isAlreadyJoined ? (
-            <button 
-              onClick={() => onUnjoin(id)} 
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
-            >
-              Unjoin
-            </button>
-          ) : membersNeeded > 0 ? (
-            <button 
-              onClick={() => onJoin(id)} 
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer"
-            >
-              Join In
-            </button>
-          ) : (
-            <p className="text-sm text-gray-500 mt-2">No seats left</p>
-          )}
-        </>
-      )}
+      {/* Riders List */}
+      <div className="bg-gray-100 p-2 rounded-lg">
+        <h3 className="font-semibold text-gray-700 mb-1">Riders:</h3>
+        <ul className="list-none text-sm text-gray-600">
+          {riders.map((rider, index) => (
+            <li key={index} className="flex items-center gap-2">
+              <span className="block w-2 h-2 bg-blue-500 rounded-full"></span>
+              {rider.name} (Enrollment: {rider.enrollmentNumber})
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {isCreator ? (
+          <button 
+            onClick={() => onDelete(id)} 
+            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+          >
+            Delete
+          </button>
+        ) : isAlreadyJoined ? (
+          <button 
+            onClick={() => onUnjoin(id)} 
+            className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+          >
+            Unjoin
+          </button>
+        ) : membersNeeded > 0 ? (
+          <button 
+            onClick={() => onJoin(id)} 
+            className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+          >
+            Join In
+          </button>
+        ) : (
+          <p className="text-sm text-gray-500 mt-2 w-full text-center">No seats left</p>
+        )}
+      </div>
     </div>
   );
 }

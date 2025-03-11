@@ -164,31 +164,42 @@ export default function Home() {
   return (
     <div>
       <Navbar setIsAuthenticated={setIsAuthenticated} />
-      <div className="mt-16 p-6">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="p-4 bg-slate-200 rounded-lg font-bold cursor-pointer mt-2"
-        >
-          Add +
-        </button>
+      <div className="mt-16 p-6 max-w-3xl mx-auto">
+        {/* Add Ticket Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-6 py-3 bg-blue-400 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-600 transition"
+          >
+            ➕ Add Ride
+          </button>
+        </div>
+
+        {/* Ticket Modal */}
         <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSave} />
-        <div className="mt-4">
-          {rides.map((ride) => (
-            <Tickets
-              key={ride._id} // Use unique `_id` for keys
-              id={ride._id}
-              time={ride.time}
-              source={ride.source}
-              destination={ride.destination}
-              membersNeeded={ride.membersNeeded}
-              riders={ride.riders}
-              userId={ride.userId} // ✅ Passing `userId` correctly
-              isCompleted={ride.isCompleted}
-              onJoin={handleJoin}
-              onUnjoin={handleUnjoin}
-              onDelete={handleDelete}
-            />
-          ))}
+
+        {/* Tickets List */}
+        <div className="mt-6">
+          {rides.length > 0 ? (
+            rides.map((ride) => (
+              <Tickets
+                key={ride._id} // Use unique `_id` for keys
+                id={ride._id}
+                time={ride.time}
+                source={ride.source}
+                destination={ride.destination}
+                membersNeeded={ride.membersNeeded}
+                riders={ride.riders}
+                userId={ride.userId} // ✅ Passing `userId` correctly
+                isCompleted={ride.isCompleted}
+                onJoin={handleJoin}
+                onUnjoin={handleUnjoin}
+                onDelete={handleDelete}
+              />
+            ))
+          ) : (
+            <p className="text-center text-gray-600 mt-4">No rides available. Create one!</p>
+          )}
         </div>
       </div>
     </div>
