@@ -1,13 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types"; // ✅ Import PropTypes
 
-export default function Navbar({  setIsAuthenticated }) {
-  const navigate = useNavigate();
+export default function Navbar({ setIsAuthenticated }) {
+  //const navigate = useNavigate();
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
     setIsAuthenticated(false);
-    navigate("/login"); // ✅ Redirects properly
+    window.location.href = "/login"; // ✅ Forces a hard reload to /login
   }
 
   return (
@@ -19,24 +21,16 @@ export default function Navbar({  setIsAuthenticated }) {
 
         <ul className="flex space-x-6">
           <li>
-            <Link to="/about" className="hover:text-gray-300">
-              About
-            </Link>
+            <Link to="/about" className="hover:text-gray-300">About</Link>
           </li>
           <li>
-            <Link to="/services" className="hover:text-gray-300">
-              Services
-            </Link>
+            <Link to="/services" className="hover:text-gray-300">Services</Link>
           </li>
           <li>
-            <Link to="/contact" className="hover:text-gray-300">
-              Contact
-            </Link>
+            <Link to="/contact" className="hover:text-gray-300">Contact</Link>
           </li>
           <li>
-            <Link to="/user" className="hover:text-gray-300">
-              User
-            </Link>
+            <Link to="/user" className="hover:text-gray-300">User</Link>
           </li>
           <li>
             <button
@@ -51,3 +45,8 @@ export default function Navbar({  setIsAuthenticated }) {
     </nav>
   );
 }
+
+// ✅ Add PropTypes validation
+Navbar.propTypes = {
+  setIsAuthenticated: PropTypes.func.isRequired,
+};

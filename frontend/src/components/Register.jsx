@@ -6,6 +6,7 @@ export default function Register({ setIsAuthenticated }) {
         name: "",
         email: "",
         enrollmentNumber: "",
+        phoneNumber: "",
         upiId: "",
         password: "",
     });
@@ -31,17 +32,20 @@ export default function Register({ setIsAuthenticated }) {
             });
 
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.message || "Registration failed");
             }
 
-            // ✅ Save token & user after registration (auto-login)
+            if (!data.token) {
+                throw new Error("No token received from backend");
+            }
+
+            // ✅ Store token & user info in localStorage
             localStorage.setItem("token", data.token);
             localStorage.setItem("user", JSON.stringify(data.user));
 
-            setIsAuthenticated(true); // Update state
-            navigate("/"); // Redirect to Tickets
+            setIsAuthenticated(true);
+            navigate("/");
         } catch (error) {
             setError(error.message);
         } finally {
@@ -81,6 +85,16 @@ export default function Register({ setIsAuthenticated }) {
                     type="text"
                     name="enrollmentNumber"
                     value={formData.enrollmentNumber}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded mb-3"
+                    required
+                />
+
+                <label className="block text-sm font-medium">Phone Number</label>
+                <input
+                    type="text"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
                     className="w-full p-2 border rounded mb-3"
                     required

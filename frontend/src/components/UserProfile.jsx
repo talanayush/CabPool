@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Navbar from "./Navbar";
-import Tickets from "./Tickets";
 
 export default function User({ isAuthenticated }) {
   const [user, setUser] = useState(null);
-  const [tickets, setTickets] = useState([]);
+  const [createdTickets, setCreatedTickets] = useState([]);
+  const [joinedTickets, setJoinedTickets] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate("/login"); // 🔹 Redirect to login if not authenticated
+      navigate("/login");
       return;
     }
 
@@ -26,15 +26,16 @@ export default function User({ isAuthenticated }) {
 
     async function fetchUserTickets() {
       try {
-        const response = await fetch(`http://localhost:5000/tickets/all`);
+        const response = await fetch("http://localhost:5000/tickets/all");
         const data = await response.json();
         if (response.ok) {
-          // 🔹 Filter and sort tickets by latest `createdAt`
-          const userTickets = data
-            .filter(ticket => ticket.userId === decoded.enrollmentNumber)
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Latest first
+          const created = data.filter(ticket => ticket.userId === decoded.enrollmentNumber);
+          const joined = data.filter(ticket => 
+            ticket.riders.some(r => r.enrollmentNumber === decoded.enrollmentNumber)
+          );
 
-          setTickets(userTickets);
+          setCreatedTickets(created);
+          setJoinedTickets(joined);
         } else {
           console.error("Error fetching user tickets:", data.error);
         }
@@ -44,7 +45,11 @@ export default function User({ isAuthenticated }) {
     }
 
     fetchUserTickets();
-  }, [isAuthenticated, navigate]); // 🔹 Re-run effect when auth state changes
+  }, [isAuthenticated, navigate]);
+
+  function handleTicketClick(ticketId) {
+    navigate(`/ticket/${ticketId}`); // Navigate to TicketInfo
+  }
 
   return (
     <div>
@@ -60,24 +65,39 @@ export default function User({ isAuthenticated }) {
           <p>Loading user information...</p>
         )}
 
-        <div className="mt-4">
-          <h2 className="text-xl font-bold">Your Tickets</h2>
-          {tickets.length > 0 ? (
-            tickets.map((ticket) => (
-              <Tickets 
-                key={ticket._id}
-                id={ticket._id} 
-                time={ticket.time}
-                source={ticket.source}
-                destination={ticket.destination}
-                membersNeeded={ticket.membersNeeded}
-                riders={ticket.riders}
-              />
-            ))
-          ) : (
-            <p>No tickets raised.</p>
-          )}
-        </div>
+        {/* Created Tickets */}
+        <h2 className="text-xl font-bold mt-6">Your Created Tickets</h2>
+        {createdTickets.length > 0 ? (
+          createdTickets.map(ticket => (
+            <div 
+              key={ticket._id} 
+              onClick={() => handleTicketClick(ticket._id)} 
+              className="cursor-pointer block p-4 bg-white shadow-md rounded-lg mt-2 hover:bg-gray-100"
+            >
+              <p><strong>Time:</strong> {ticket.time}</p>
+              <p><strong>From:</strong> {ticket.source} → <strong>To:</strong> {ticket.destination}</p>
+            </div>
+          ))
+        ) : (
+          <p>No tickets created.</p>
+        )}
+
+        {/* Joined Tickets */}
+        <h2 className="text-xl font-bold mt-6">Tickets You Joined</h2>
+        {joinedTickets.length > 0 ? (
+          joinedTickets.map(ticket => (
+            <div 
+              key={ticket._id} 
+              onClick={() => handleTicketClick(ticket._id)} 
+              className="cursor-pointer block p-4 bg-white shadow-md rounded-lg mt-2 hover:bg-gray-100"
+            >
+              <p><strong>Time:</strong> {ticket.time}</p>
+              <p><strong>From:</strong> {ticket.source} → <strong>To:</strong> {ticket.destination}</p>
+            </div>
+          ))
+        ) : (
+          <p>You have not joined any tickets.</p>
+        )}
       </div>
     </div>
   );

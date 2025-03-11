@@ -4,6 +4,7 @@ import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import User from "./components/UserProfile";
+import TicketInfo from "./components/TicketInfo";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -40,6 +41,7 @@ function App() {
           path="/user"
           element={isAuthenticated ? <User isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />}
         />
+         <Route path="/ticket/:ticketId" element={<TicketInfo />} /> {/* Route for TicketInfo */}
       </Routes>
     </Router>
   );

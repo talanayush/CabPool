@@ -11,17 +11,13 @@ export default function RideDetailsModal({ isOpen, onClose, onSave }) {
   function handleChange(e) {
     const { name, value } = e.target;
 
-    if (name === "membersNeeded") {
-      const members = Math.min(Math.max(0, Number(value)), 3); // Restrict between 0 and 3
-      setRideDetails({ ...rideDetails, [name]: members });
-    } else {
-      setRideDetails({ ...rideDetails, [name]: value });
-    }
+    setRideDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: name === "membersNeeded" ? Math.min(Math.max(0, Number(value)), 3) : value,
+    }));
   }
 
   function handleSubmit() {
-    console.log("inside handleSubmit");
-    console.log(rideDetails);
     onSave(rideDetails);
     onClose();
   }
@@ -35,24 +31,47 @@ export default function RideDetailsModal({ isOpen, onClose, onSave }) {
 
         <div className="flex flex-col space-y-3">
           <label className="font-medium">Time to Leave:</label>
-          <input type="time" name="time" className="border p-2 rounded" onChange={handleChange} />
+          <input
+            type="time"
+            name="time"
+            className="border p-2 rounded"
+            value={rideDetails.time}
+            onChange={handleChange}
+            required
+          />
 
           <label className="font-medium">Source:</label>
-          <input type="text" name="source" className="border p-2 rounded" placeholder="Enter source" onChange={handleChange} />
+          <input
+            type="text"
+            name="source"
+            className="border p-2 rounded"
+            placeholder="Enter source"
+            value={rideDetails.source}
+            onChange={handleChange}
+            required
+          />
 
           <label className="font-medium">Destination:</label>
-          <input type="text" name="destination" className="border p-2 rounded" placeholder="Enter destination" onChange={handleChange} />
+          <input
+            type="text"
+            name="destination"
+            className="border p-2 rounded"
+            placeholder="Enter destination"
+            value={rideDetails.destination}
+            onChange={handleChange}
+            required
+          />
 
           <label className="font-medium">Members Needed (Max 3):</label>
           <input
             type="number"
             name="membersNeeded"
             className="border p-2 rounded"
-            placeholder="Enter members count"
             value={rideDetails.membersNeeded}
             onChange={handleChange}
             min="0"
             max="3"
+            required
           />
         </div>
 
