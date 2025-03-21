@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { FaInfoCircle, FaTools, FaPhone, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaInfoCircle, FaTools, FaUser, FaSignOutAlt, FaHome } from "react-icons/fa";
 
 export default function Navbar({ setIsAuthenticated }) {
   const [isPWA, setIsPWA] = useState(false);
@@ -51,11 +51,14 @@ export default function Navbar({ setIsAuthenticated }) {
               {isMobile ? <FaTools /> : <> <FaTools /> <span>Services</span> </>}
             </Link>
           </li>
-          <li>
-            <Link to="/contact" className="hover:text-gray-300 flex items-center space-x-2">
-              {isMobile ? <FaPhone /> : <> <FaPhone /> <span>Contact</span> </>}
-            </Link>
-          </li>
+          {/* Home Button: Only visible on mobile */}
+          {isMobile && (
+            <li>
+              <Link to="/" className="hover:text-gray-300 flex items-center space-x-2">
+                <FaHome />
+              </Link>
+            </li>
+          )}
           <li>
             <Link to="/user" className="hover:text-gray-300 flex items-center space-x-2">
               {isMobile ? <FaUser /> : <> <FaUser /> <span>User</span> </>}

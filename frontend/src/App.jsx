@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import User from "./components/UserProfile";
 import TicketInfo from "./components/TicketInfo";
+import AboutPage from "./components/About";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -27,21 +28,40 @@ function App() {
       <Routes>
         <Route 
           path="/" 
-          element={isAuthenticated ? <Home isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? 
+            <Home isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} /> 
+            : 
+            <Navigate to="/login" />} 
         />
         <Route 
           path="/login" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Login setIsAuthenticated={setIsAuthenticated} />} 
+          element={isAuthenticated ? 
+            <Navigate to="/" /> 
+            : 
+            <Login isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} 
         />
         <Route 
           path="/register" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Register setIsAuthenticated={setIsAuthenticated} />} 
+          element={isAuthenticated ? 
+            <Navigate to="/" /> 
+            : 
+            <Register isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />} 
         />
         <Route
           path="/user"
-          element={isAuthenticated ? <User isAuthenticated={isAuthenticated} /> : <Navigate to="/login" />}
+          element={isAuthenticated ? 
+            <User isAuthenticated={isAuthenticated} /> 
+            : 
+            <Navigate to="/login" />}
         />
-         <Route path="/ticket/:ticketId" element={<TicketInfo />} /> {/* Route for TicketInfo */}
+        <Route 
+          path="/ticket/:ticketId" 
+          element={<TicketInfo isAuthenticated={isAuthenticated} />} 
+        />
+        <Route 
+          path="/about" 
+          element={<AboutPage isAuthenticated={isAuthenticated} />} 
+        />
       </Routes>
     </Router>
   );

@@ -55,7 +55,7 @@ export default function User({ isAuthenticated }) {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <Navbar />
+      <Navbar setIsAuthenticated={isAuthenticated} />
       <div className="max-w-4xl mx-auto mt-16 p-6">
         
         {/* User Info Card */}
