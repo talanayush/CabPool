@@ -1,75 +1,78 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { FaInfoCircle, FaTools, FaPhone, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 export default function Navbar({ setIsAuthenticated }) {
-  const [isOpen, setIsOpen] = useState(false); // ✅ Track dropdown state
+  const [isPWA, setIsPWA] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    // Detect if the app is running as a PWA
+    setIsPWA(window.matchMedia("(display-mode: standalone)").matches);
+
+    // Detect screen width changes for mobile mode
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   function handleLogout() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsAuthenticated(false);
-    window.location.href = "/login"; // ✅ Force reload to login page
+    window.location.href = "/login";
   }
 
   return (
-    <nav className="bg-slate-800 text-white p-4 shadow-lg fixed top-0 w-full z-50">
+    <nav
+      className={`bg-slate-800 text-white p-4 shadow-lg z-50 ${
+        isMobile ? "fixed bottom-0 w-full bg-slate-800/90" : "fixed top-0 w-full"
+      }`}
+    >
       <div className="container mx-auto flex justify-between items-center">
-        
-        {/* Logo */}
-        <Link to="/" className="text-lg font-semibold hover:text-gray-300">
-          My App
-        </Link>
+        {/* Logo (Only visible on desktop) */}
+        {!isMobile && (
+          <Link to="/" className="text-lg font-semibold hover:text-gray-300">
+            {isPWA ? "📌" : "My App"}
+          </Link>
+        )}
 
-        {/* Dropdown Button for Mobile (Right Side) */}
-        <div className="md:hidden">
-          <button 
-            className="focus:outline-none text-white text-2xl" 
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? "✖" : "☰"} {/* Toggle between 'X' and '☰' */}
-          </button>
-        </div>
-
-        {/* Desktop Nav Links */}
-        <ul className="hidden md:flex space-x-6">
-          <li><Link to="/about" className="hover:text-gray-300">About</Link></li>
-          <li><Link to="/services" className="hover:text-gray-300">Services</Link></li>
-          <li><Link to="/contact" className="hover:text-gray-300">Contact</Link></li>
-          <li><Link to="/user" className="hover:text-gray-300">User</Link></li>
+        {/* Navbar Links */}
+        <ul className={`flex ${isMobile ? "justify-around w-full text-3xl p-3" : "space-x-6 text-lg"}`}>
           <li>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 rounded-lg px-4 py-2 hover:bg-red-700 transition"
-            >
-              Logout
+            <Link to="/about" className="hover:text-gray-300 flex items-center space-x-2">
+              {isMobile ? <FaInfoCircle /> : <> <FaInfoCircle /> <span>About</span> </>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/services" className="hover:text-gray-300 flex items-center space-x-2">
+              {isMobile ? <FaTools /> : <> <FaTools /> <span>Services</span> </>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className="hover:text-gray-300 flex items-center space-x-2">
+              {isMobile ? <FaPhone /> : <> <FaPhone /> <span>Contact</span> </>}
+            </Link>
+          </li>
+          <li>
+            <Link to="/user" className="hover:text-gray-300 flex items-center space-x-2">
+              {isMobile ? <FaUser /> : <> <FaUser /> <span>User</span> </>}
+            </Link>
+          </li>
+          <li>
+            <button onClick={handleLogout} className="text-red-500 hover:text-red-700 flex items-center space-x-2">
+              {isMobile ? <FaSignOutAlt /> : <> <FaSignOutAlt /> <span>Logout</span> </>}
             </button>
           </li>
         </ul>
       </div>
-
-      {/* Mobile Dropdown Menu */}
-      {isOpen && (
-        <ul className="md:hidden absolute right-4 top-16 w-48 bg-slate-900 text-white shadow-lg rounded-lg p-4 space-y-4">
-          <li><Link to="/about" className="block hover:text-gray-300" onClick={() => setIsOpen(false)}>About</Link></li>
-          <li><Link to="/services" className="block hover:text-gray-300" onClick={() => setIsOpen(false)}>Services</Link></li>
-          <li><Link to="/contact" className="block hover:text-gray-300" onClick={() => setIsOpen(false)}>Contact</Link></li>
-          <li><Link to="/user" className="block hover:text-gray-300" onClick={() => setIsOpen(false)}>User</Link></li>
-          <li>
-            <button
-              onClick={handleLogout}
-              className="w-full bg-red-500 rounded-lg px-4 py-2 hover:bg-red-700 transition"
-            >
-              Logout
-            </button>
-          </li>
-        </ul>
-      )}
     </nav>
   );
 }
 
-// ✅ Add PropTypes validation
+// ✅ PropTypes validation
 Navbar.propTypes = {
   setIsAuthenticated: PropTypes.func.isRequired,
 };

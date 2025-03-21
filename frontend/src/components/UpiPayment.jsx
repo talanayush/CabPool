@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode"; // ✅ Import QR code generator
 
+
+
 export default function UPIPayment({ user, amount }) {
   const { upiId, name } = user; // Extract user details from props
   const txnId = `TXN${Date.now()}`;

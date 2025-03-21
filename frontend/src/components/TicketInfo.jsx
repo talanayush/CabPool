@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
+
+ // npm install qrcode.react
 
 export default function TicketInfo() {
   const { ticketId } = useParams();
@@ -10,6 +13,10 @@ export default function TicketInfo() {
   const [farePerRider, setFarePerRider] = useState(null);
   const [isFareEntered, setIsFareEntered] = useState(false);
 
+  
+  const [showUPIModal, setShowUPIModal] = useState(false);
+  const [upiLink, setUpiLink] = useState("");
+
   // Fetch logged-in user details
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
   const userEnrollmentNumber = loggedInUser?.enrollmentNumber;
@@ -17,6 +24,19 @@ export default function TicketInfo() {
   useEffect(() => {
     fetchTicketDetails();
   }, []); // Fetch only once on mount
+
+
+  function handlePayment(upiId, amount) {
+    const link = `upi://pay?pa=${upiId}&pn=CabSharing&am=${amount}&cu=INR`;
+    setUpiLink(link);
+  
+    const isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = link; // Redirect to UPI app
+    } else {
+      setShowUPIModal(true); // Show modal on desktop
+    }
+  }
 
   async function fetchTicketDetails() {
     try {
@@ -211,8 +231,9 @@ export default function TicketInfo() {
             )}
 
             {!rider.paid && isFareEntered && rider.enrollmentNumber !== ticket.userId && rider.enrollmentNumber === userEnrollmentNumber && (
+              
               <button
-                onClick={() => alert(`Redirecting to UPI payment for ₹${farePerRider}`)}
+                onClick={() => handlePayment(ticket.userId, farePerRider)}
                 className="ml-4 bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded font-medium"
               >
                 Pay ₹{farePerRider}
@@ -236,6 +257,21 @@ export default function TicketInfo() {
         </div>
       ) : (
         <p className="text-red-600 font-bold mt-6 text-center">❌ Payment pending from some riders.</p>
+      )}
+      {showUPIModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-xl font-bold mb-4">Scan QR Code to Pay</h2>
+            <QRCodeSVG value={upiLink} size={200} />
+            <p className="mt-3 text-gray-600">OR</p>
+            <p className="mt-1 text-blue-500 underline cursor-pointer" onClick={() => navigator.clipboard.writeText(upiLink)}>
+              Copy UPI Link
+            </p>
+            <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded" onClick={() => setShowUPIModal(false)}>
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
