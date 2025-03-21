@@ -141,6 +141,24 @@ export default function Home() {
     }
   }
 
+  const handleComplete = async (ticketId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/tickets/complete/${ticketId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await response.json();
+      
+      if (response.ok) {
+        setRides(prevRides => prevRides.filter(ride => ride._id !== ticketId)); // Remove completed ride
+      } else {
+        console.error("Error completing ride:", data.error);
+      }
+    } catch (error) {
+      console.error("Error completing ride:", error);
+    }
+  };
+
   useEffect(() => {
     async function fetchTickets() {
       try {
@@ -148,7 +166,7 @@ export default function Home() {
         const data = await response.json();
         if (response.ok) {
           const sortedTickets = data
-            .filter((ticket) => ticket.createdAt)
+            .filter((ticket) => ticket.createdAt && !ticket.isCompleted) // Exclude completed tickets
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
           setRides(sortedTickets);
         } else {
@@ -162,7 +180,7 @@ export default function Home() {
   }, [isAuthenticated]);
 
   return (
-    <div>
+    <div >
       <Navbar setIsAuthenticated={setIsAuthenticated} />
       <div className="mt-16 p-6 max-w-3xl mx-auto">
         {/* Add Ticket Button */}
@@ -195,6 +213,7 @@ export default function Home() {
                 onJoin={handleJoin}
                 onUnjoin={handleUnjoin}
                 onDelete={handleDelete}
+                onComplete={handleComplete}
               />
             ))
           ) : (

@@ -1,0 +1,34 @@
+{
+    "name": "Cab Pooling App",
+    "short_name": "CabPool",
+    "description": "A cab pooling app for college students",
+    "start_url": "/",
+    "display": "standalone",
+    "id":"/",
+    "background_color": "#ffffff",
+    "theme_color": "#007bff",
+    "icons": [
+      {
+        "src": "./icons/accounrt1.png",
+        "type": "image/png",
+        "sizes": "862x862"
+      }
+    
+    ],
+    "screenshots": [
+        {
+            "src": "./icons/accounrt1.png",
+            "sizes": "862x862",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "./icons/accounrt1.png",
+            "sizes": "862x862",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ]
+
+  }
+  

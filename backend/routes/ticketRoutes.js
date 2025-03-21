@@ -144,23 +144,44 @@ router.delete("/delete/:ticketId", async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
   }
 });
-router.put("/complete/:id", async (req, res) => {
-  const { fare } = req.body;
+router.post("/complete/:id", async (req, res) => {
+  const { id } = req.params;
   try {
-    const ticket = await Ticket.findById(req.params.id);
-    if (!ticket) return res.status(404).json({ error: "Ticket not found" });
-
-    ticket.fare = fare;
-    await ticket.save();
-    res.json({ message: "Fare updated successfully", ticket });
+    const ticket = await Ticket.findByIdAndUpdate(id, { isCompleted: true }, { new: true });
+    res.json({ ticket });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Error marking ride as completed" });
   }
 });
+
+router.post("/set-fare/:id", async (req, res) => {
+  const { id } = req.params;
+  const { fare } = req.body;
+  try {
+    const ticket = await Ticket.findByIdAndUpdate(id, { fare }, { new: true });
+    res.json({ ticket });
+  } catch (error) {
+    res.status(500).json({ error: "Error setting fare" });
+  }
+});
+router.patch("/updateFare/:ticketId", async (req, res) => {
+  const { ticketId } = req.params;
+  const { fare } = req.body;
+  try {
+    const ticket = await Ticket.findByIdAndUpdate(ticketId, { fare }, { new: true });
+    res.json({ ticket });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating fare" });
+  }
+});
+
+
+
 
 router.patch("/markPaid/:ticketId/:riderId", async (req, res) => {
   try {
     const { ticketId, riderId } = req.params;
+    const { paid } = req.body; // Get the paid status from the request body
 
     const ticket = await Ticket.findById(ticketId);
     if (!ticket) return res.status(404).json({ error: "Ticket not found" });
@@ -168,7 +189,7 @@ router.patch("/markPaid/:ticketId/:riderId", async (req, res) => {
     const rider = ticket.riders.find(r => r.enrollmentNumber === riderId);
     if (!rider) return res.status(404).json({ error: "Rider not found" });
 
-    rider.paid = true; // Mark this rider as paid
+    rider.paid = paid; // Update the paid status based on request
 
     // Check if all riders have paid
     ticket.paymentsConfirmed = ticket.riders.every(r => r.paid);
@@ -180,6 +201,7 @@ router.patch("/markPaid/:ticketId/:riderId", async (req, res) => {
     res.status(500).json({ error: "Error updating rider payment" });
   }
 });
+
 
 
 
