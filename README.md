@@ -35,7 +35,7 @@ A seamless **cab pooling** web application designed for college students to effi
 
 ### **1️⃣ Clone the Repository**
 ```bash
-git clone https://github.com/talanayush/Cab-Pool.git
+git clone https://github.com/talanayush/CabPool.git
 cd Cab-Pool
 ```
 
