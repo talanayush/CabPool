@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { FaInfoCircle, FaTools, FaUser, FaSignOutAlt, FaHome } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 export default function Navbar({ setIsAuthenticated }) {
   const [isPWA, setIsPWA] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const navigate = useNavigate();
   useEffect(() => {
     // Detect if the app is running as a PWA
     setIsPWA(window.matchMedia("(display-mode: standalone)").matches);
@@ -22,7 +22,11 @@ export default function Navbar({ setIsAuthenticated }) {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setIsAuthenticated(false);
-    window.location.href = "/login";
+
+    // Use navigate for smooth transition
+    setTimeout(() => {
+      navigate("/login", { replace: true });
+    }, 300); // Small delay for a smoother transition
   }
 
   return (
