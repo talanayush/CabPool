@@ -1,6 +1,7 @@
 const express = require("express");
 const Ticket = require("../models/Tickets");
 const router = express.Router();
+const User = require("../models/User");
 const mongoose = require("mongoose");
 
 // ✅ Save a ticket
@@ -37,6 +38,7 @@ router.get("/all", async (req, res) => {
     res.status(500).json({ error: "Server error while fetching tickets" });
   }
 });
+
 
 router.patch("/close/:ticketId", async (req, res) => {
   try {
@@ -75,6 +77,26 @@ router.get("/:ticketId", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+router.get("/get-upi/:enrollmentNumber", async (req, res) => {
+  try {
+    console.log("Fetching UPI for enrollment number:", req.params.enrollmentNumber);
+    
+    const user = await User.findOne({ enrollmentNumber: req.params.enrollmentNumber });
+    
+    if (!user || !user.upiId) {
+      console.log("User not found or UPI ID missing");
+      return res.status(404).json({ error: "UPI ID not found" });
+    }
+
+    console.log("UPI ID fetched:", user.upiId);
+    res.json({ upiId: user.upiId });
+  } catch (error) {
+    console.error("Error fetching UPI ID:", error);
+    res.status(500).json({ error: "Server error while fetching UPI ID" });
+  }
+});
+
 
 
 router.post("/join/:ticketId", async (req, res) => {
