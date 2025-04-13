@@ -110,5 +110,5 @@ This project is licensed under the **MIT License**.
 For any queries or contributions, feel free to reach out!  
 
 👤 **Ayush Talan**  
-📧 Email: [iamayushtalan@example.com](mailto:iamayushtalan@example.com)  
+📧 Email: [iamayushtalan@gmail.com](mailto:iamayushtalan@gmail.com)  
 🔗 GitHub: [talanayush](https://github.com/talanayush)  
