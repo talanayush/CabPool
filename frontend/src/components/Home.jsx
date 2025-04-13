@@ -179,6 +179,44 @@ export default function Home() {
     fetchTickets();
   }, [isAuthenticated]);
 
+  async function handleSetFare(ticketId, fare) {
+    try {
+      const res = await fetch(`http://localhost:5000/tickets/setFare/${ticketId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fare }),
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        updateTicket(updated.ticket);
+      }
+    } catch (error) {
+      console.error("Error setting fare:", error);
+    }
+  }
+
+  async function handlePay(ticketId) {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const decoded = jwtDecode(token);
+      const res = await fetch(`http://localhost:5000/tickets/pay/${ticketId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ enrollmentNumber: decoded.enrollmentNumber }),
+      });
+
+      if (res.ok) {
+        const updated = await res.json();
+        updateTicket(updated.ticket);
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  }
+
   return (
     <div >
       <Navbar setIsAuthenticated={setIsAuthenticated} />
@@ -214,6 +252,10 @@ export default function Home() {
                 onUnjoin={handleUnjoin}
                 onDelete={handleDelete}
                 onComplete={handleComplete}
+                fare={ride.fare}
+                onSetFare={handleSetFare}
+                onPay={handlePay}
+                
               />
             ))
           ) : (
@@ -224,3 +266,4 @@ export default function Home() {
     </div>
   );
 }
+ 

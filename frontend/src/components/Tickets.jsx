@@ -3,8 +3,21 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function Tickets({ 
-  id, time, source, destination, membersNeeded, riders, userId, isCompleted, fare, 
-  onJoin, onUnjoin, onDelete, onComplete, onSetFare, onPay
+  id, 
+  time, 
+  source, 
+  destination, 
+  membersNeeded, 
+  riders, 
+  userId, 
+  isCompleted, 
+  fare, 
+  onJoin, 
+  onUnjoin, 
+  onDelete, 
+  onComplete, 
+  onSetFare, 
+  onPay
 }) {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");

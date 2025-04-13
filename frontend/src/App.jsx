@@ -6,7 +6,7 @@ import Register from "./components/Register";
 import User from "./components/UserProfile";
 import TicketInfo from "./components/TicketInfo";
 import AboutPage from "./components/About";
-
+import Chat from "./components/Chat";
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
@@ -62,6 +62,10 @@ function App() {
         <Route 
           path="/about" 
           element={<AboutPage isAuthenticated={isAuthenticated} />} 
+        />
+        <Route 
+          path="/chat/:ticketId" 
+          element={<Chat/>} 
         />
       </Routes>
     </Router>
