@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useParams, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:5000"); // Replace with your backend URL
 
 const ChatP = () => {
   const { ticketId } = useParams();
@@ -36,6 +39,18 @@ const ChatP = () => {
     };
 
     fetchMessages();
+
+    // Join room
+    socket.emit("joinRoom", ticketId);
+
+    // Listen for real-time messages
+    socket.on("receiveMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socket.off("receiveMessage");
+    };
   }, [ticketId]);
 
   useEffect(() => {
@@ -44,33 +59,34 @@ const ChatP = () => {
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
-
+  
     const messageData = {
       ticketId,
       message: newMessage,
       senderName: user.senderName,
       senderId: user.senderId,
     };
-
+  
     try {
       const res = await fetch("http://localhost:5000/chat/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(messageData),
       });
-
+  
       const data = await res.json();
-
+  
       if (!res.ok) {
         console.error("Error sending message:", data);
       } else {
-        setMessages((prev) => [...prev, messageData]);
+        socket.emit("sendMessage", messageData); // Only emit
         setNewMessage("");
       }
     } catch (err) {
       console.error("Fetch error:", err);
     }
   };
+  
 
   const handleClose = () => {
     navigate(`/ticket/${ticketId}`);
