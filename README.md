@@ -1,5 +1,4 @@
-
-# 🚖 Cab Pool  https://cab-pool1-frontend.vercel.app/
+# 🚖 CabPool  https://cab-pool1-frontend.vercel.app/
 
 A seamless **cab pooling** web application designed for college students to efficiently share rides between **Sector 62 and Sector 128 campuses**. The platform replaces the existing WhatsApp-based system, allowing users to **create, join, and manage ride tickets** while integrating a **UPI-based payment system** for cost-sharing.
 
@@ -13,8 +12,9 @@ A seamless **cab pooling** web application designed for college students to effi
   - Tickets are **hidden** once their time has passed.  
   - Expired tickets are **permanently deleted** from the system.  
 - **Secure Authentication**: Implemented using **JWT (JSON Web Token)**.  
-- **Seamless Payments**: Integrated **UPI-based payment** where the ticket creator enters the fare, and other riders can pay their share.  
+- **Seamless Payments**: Integrated **UPI deep link-based payment** where the ticket creator enters the fare, and other riders can pay their share.  
 - **Progressive Web App (PWA)**: Ensures fast and reliable performance on mobile devices.  
+- **Chat Feature**: Riders within a ticket can communicate via an in-app chat system.
 
 ---
 
@@ -76,8 +76,9 @@ npm start
 
 1. **Sign up / Log in** to the platform.  
 2. **Create a new ride ticket** or **join an existing one**.  
-3. **Confirm the ride details** and make payments via **UPI**.  
-4. **Tickets automatically expire** once the ride time has passed.  
+3. **Chat with fellow riders** within your ticket.  
+4. **Confirm the ride details** and make payments via **UPI deep links**.  
+5. **Tickets automatically expire** once the ride time has passed.  
 
 ---
 
@@ -86,6 +87,7 @@ npm start
 - **Live Tracking**: Real-time location updates of the cab.  
 - **User Ratings & Reviews**: Rate co-passengers for safety and reliability.  
 - **Ride History**: View past rides and payment details.  
+- **Notification System**: Ride reminders and updates.  
 
 ---
 
@@ -111,4 +113,5 @@ For any queries or contributions, feel free to reach out!
 
 👤 **Ayush Talan**  
 📧 Email: [iamayushtalan@gmail.com](mailto:iamayushtalan@gmail.com)  
-🔗 GitHub: [talanayush](https://github.com/talanayush)  
+🔗 GitHub: [talanayush](https://github.com/talanayush)
+
